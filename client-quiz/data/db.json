@@ -1,0 +1,99 @@
+{
+  "exams": [
+    {
+      "id": "1",
+      "startDate": "05 Mar 202 00:00:00 GMT",
+      "duration": 30,
+      "questionNumber": 2,
+      "examName": "Din",
+      "answers": "AB"
+    },
+    {
+      "id": "2",
+      "startDate": "01 Mar 2024 00:00:00 GMT",
+      "duration": 30,
+      "questionNumber": 2,
+      "examName": "Mat",
+      "answers": "AB"
+    },
+    {
+      "id": "3",
+      "startDate": "02 Mar 2025 00:00:00 GMT",
+      "duration": 30,
+      "questionNumber": 2,
+      "examName": "Inkılap",
+      "answers": "AB"
+    }
+  ],
+  "questions": [
+    {
+      "id": "1",
+      "examID": "1",
+      "question": "Bu koca dağları kim yarattı?",
+      "optionA": "Allah",
+      "optionB": "Allah",
+      "optionC": "Allah",
+      "optionD": "Allah",
+      "index": "1"
+    },
+    {
+      "id": "2",
+      "examID": "1",
+      "question": "Haluk Levent Neden Sadece Kızlara Yardım Ediyor?",
+      "optionA": "Allah",
+      "optionB": "Allah",
+      "optionC": "Allah",
+      "optionD": "Allah",
+      "index": "2"
+    }
+  ],
+  "userExam": [
+    {
+      "id": "1",
+      "studentID": "1",
+      "examID": "1",
+      "active": 1,
+      "result": 0
+    },
+    {
+      "id": "2",
+      "studentID": "1",
+      "examID": "2",
+      "active": 1,
+      "result": 0
+    },
+    {
+      "id": "3",
+      "studentID": "1",
+      "examID": "3",
+      "active": 1,
+      "result": 0
+    }
+  ],
+  "Teacher": [
+    {
+      "id": "1",
+      "name": "ege",
+      "lastname": "koçtepe"
+    }
+  ],
+  "TeacherStudent": [
+    {
+      "TeacherID": "1",
+      "studentID": "1",
+      "id": "380f"
+    }
+  ],
+  "Student": [
+    {
+      "studentID": 1,
+      "name": "ege",
+      "result": 10
+    },
+    {
+      "studentID": 2,
+      "name": "dogan",
+      "result": 20
+    }
+  ]
+}
