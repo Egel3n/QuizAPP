@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import axios from "./api/axios";
 
 const QuestionCreate = () => {
-  const [question, setQuestion] = useState("");
+  const [questionString, setQuestion] = useState("");
   const [optionA, setOptionA] = useState("");
   const [optionB, setOptionB] = useState("");
   const [optionC, setOptionC] = useState("");
@@ -22,11 +23,11 @@ const QuestionCreate = () => {
     setQuestion("");
   }
 
-  const handleSumbit = (e) => {
+  const handleSumbit = async (e) => {
     e.preventDefault();
     const questionObject = {
       examID,
-      question,
+      questionString,
       optionA,
       optionB,
       optionC,
@@ -35,16 +36,21 @@ const QuestionCreate = () => {
     };
 
     setIsPending(true);
-    fetch("http://localhost:8000/questions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(questionObject),
-    }).then(() => {
-      console.log("new question added");
-      setIsPending(false);
-      setIndex(index + 1);
-      clearForm();
-    });
+    //   fetch("http://localhost:3500/question/create", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: questionObject,
+    //   }).then(() => {
+    //     console.log("new question added");
+    //     setIsPending(false);
+    //     setIndex(index + 1);
+    //     clearForm();
+    //   });
+    // };
+    const response = await axios.post("/question/create", questionObject);
+    setIsPending(false);
+    setIndex(index + 1);
+    clearForm();
   };
 
   useEffect(() => {
@@ -59,7 +65,7 @@ const QuestionCreate = () => {
       <form>
         <label>Question:</label>
         <textarea
-          value={question}
+          value={questionString}
           onChange={(e) => setQuestion(e.target.value)}
           required
         ></textarea>

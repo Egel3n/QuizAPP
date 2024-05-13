@@ -1,5 +1,6 @@
 const User = require("../models/Student");
 const Teacher = require("../models/Teacher");
+const Admin = require("../models/Admin");
 const jwt = require("jsonwebtoken");
 
 // handle errors
@@ -54,7 +55,7 @@ const createToken = (id) => {
 // };
 
 module.exports.signup_post = async (req, res) => {
-  if (req.body.role == "Student") {
+  if (req.body.role == "student") {
     const { username, password, teacherID, name } = req.body;
 
     try {
@@ -87,22 +88,69 @@ module.exports.signup_post = async (req, res) => {
 
 module.exports.login_post = async (req, res) => {
   const { username, password } = req.body;
-  if (Teacher.exists({ username })) {
+  if (await Teacher.exists({ username: username })) {
     try {
       const user = await Teacher.login(username, password);
       const token = createToken(user._id);
       res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
-      res.status(200).json({ user: user._id });
+      res.cookie("userID", user._id, {
+        httpOnly: false,
+        maxAge: maxAge * 1000,
+      });
+      res.cookie("name", user.name, { httpOnly: false, maxAge: maxAge * 1000 });
+      res.cookie("role", "teacher", { httpOnly: false, maxAge: maxAge * 1000 });
+      res.status(200).json({
+        user: user._id,
+        username: user.username,
+        role: "teacher",
+        accessToken: token,
+      });
     } catch (err) {
       const errors = handleErrors(err);
       res.status(400).json({ errors });
     }
-  } else {
+  } else if (await User.exists({ username: username })) {
     try {
+      console.log("Ögrenci girdi");
       const user = await User.login(username, password);
       const token = createToken(user._id);
       res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
-      res.status(200).json({ user: user._id });
+      res.cookie("userID", user._id, {
+        httpOnly: false,
+        maxAge: maxAge * 1000,
+      });
+      res.cookie("name", user.name, { httpOnly: false, maxAge: maxAge * 1000 });
+      res.cookie("role", "student", { httpOnly: false, maxAge: maxAge * 1000 });
+
+      res.status(200).json({
+        user: user._id,
+        username: user.username,
+        role: "student",
+        accessToken: token,
+      });
+    } catch (err) {
+      const errors = handleErrors(err);
+      res.status(400).json({ errors });
+    }
+  } else if (await Admin.exists({ username: username })) {
+    try {
+      console.log("Ögrenci girdi");
+      const user = await Admin.login(username, password);
+      const token = createToken(user._id);
+      res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+      res.cookie("userID", user._id, {
+        httpOnly: false,
+        maxAge: maxAge * 1000,
+      });
+      res.cookie("name", user.name, { httpOnly: false, maxAge: maxAge * 1000 });
+      res.cookie("role", "admin", { httpOnly: false, maxAge: maxAge * 1000 });
+
+      res.status(200).json({
+        user: user._id,
+        username: user.username,
+        role: "admin",
+        accessToken: token,
+      });
     } catch (err) {
       const errors = handleErrors(err);
       res.status(400).json({ errors });
@@ -112,5 +160,8 @@ module.exports.login_post = async (req, res) => {
 
 module.exports.logout_get = (req, res) => {
   res.cookie("jwt", "", { maxAge: 1 });
-  res.redirect("/");
+  res.cookie("role", "", { maxAge: 1 });
+  res.cookie("name", "", { maxAge: 1 });
+  res.cookie("userID", "", { maxAge: 1 });
+  res.status(200).send("LoggedOut");
 };

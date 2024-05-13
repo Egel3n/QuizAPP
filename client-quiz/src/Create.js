@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
+import axios from "./api/axios";
 const Create = () => {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
@@ -8,25 +10,39 @@ const Create = () => {
   const [questionCount, setQuestionCount] = useState("");
   const [isPending, setIsPending] = useState(false);
   const history = useNavigate();
+  const [cookies, setCookie, removeCookie] = useCookies(["teacherID"]);
 
-  const handleSumbit = (e) => {
+  const handleSumbit = async (e) => {
     e.preventDefault();
+    console.log(cookies.userID);
     setIsPending(true);
     if (answerKey.length != questionCount) {
       window.prompt("Question count and answer key count must be same ");
       return;
     }
-    let id = crypto.randomUUID();
-    const exam = { id, title, date, duration, answerKey };
 
-    fetch("http://localhost:8000/exams", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(exam),
-    }).then(() => {
+    const teacherID = cookies.userID;
+    const exam = { title, date, duration, answerKey, teacherID, questionCount };
+
+    // await fetch("http://localhost:3500/exam/create", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(exam),
+    // }).then((result) => {
+    //   console.log(result.body);
+    //   setIsPending(false);
+    //   history("/questionCreate/" + result.body._id + "/" + questionCount);
+    // });
+    try {
+      const response = await axios.post("/exam/create", exam, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
       setIsPending(false);
-      history("/questionCreate/" + id + "/" + questionCount);
-    });
+      history("/questionCreate/" + response?.data._id + "/" + questionCount);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

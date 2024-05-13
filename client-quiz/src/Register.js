@@ -36,6 +36,24 @@ const Register = () => {
     { value: "teacher", label: "Teacher" },
   ];
 
+  const [role, setRole] = useState("");
+  const [name, setName] = useState("");
+  const [teacherID, setTeacherID] = useState("");
+
+  const teachers = [];
+  axios
+    .get("/teacher/all")
+    .then((result) => {
+      result.data.forEach((teacher) => {
+        const t = { label: teacher.username, value: teacher._id };
+        console.log(t);
+        teachers.push(t);
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
   useEffect(() => {
     userRef.current.focus();
   }, []);
@@ -65,13 +83,20 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        REGISTER_URL,
-        JSON.stringify({ user, pwd }),
+        "/signup",
+        {
+          username: user,
+          password: pwd,
+          role: role,
+          teacherID: teacherID,
+          name: name,
+        },
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
         }
       );
+      console.log({ user, pwd, role });
       // TODO: remove console.logs before deployment
       console.log(JSON.stringify(response?.data));
       //console.log(JSON.stringify(response))
@@ -96,9 +121,9 @@ const Register = () => {
     <>
       {success ? (
         <section>
-          <h1>Success!</h1>
+          <h1>User Created!</h1>
           <p>
-            <a href="/login">Sign In</a>
+            <a href="/Register">Create More!</a>
           </p>
         </section>
       ) : (
@@ -111,7 +136,16 @@ const Register = () => {
             {errMsg}
           </p>
           <h1>Register</h1>
+          <label htmlFor="username">Name:</label>
           <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              id="name"
+              autoComplete="off"
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+              required
+            />
             <label htmlFor="username">
               Username:
               <FontAwesomeIcon
@@ -224,7 +258,23 @@ const Register = () => {
 
             <label htmlFor="role-select">Select a Role:</label>
 
-            <Select id="role-select" options={options} />
+            <Select
+              id="role-select"
+              options={options}
+              onChange={(e) => setRole(e.value)}
+            />
+
+            {role === "student" ? (
+              <label htmlFor="teacher-select">Select a Teacher:</label>
+            ) : null}
+
+            {role === "student" ? (
+              <Select
+                id="teacher-select"
+                options={teachers}
+                onChange={(e) => setTeacherID(e.value)}
+              />
+            ) : null}
 
             <button
               disabled={!validName || !validPwd || !validMatch ? true : false}

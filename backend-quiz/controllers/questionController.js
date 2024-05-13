@@ -13,6 +13,18 @@ const questions_by_examID = (req, res) => {
     });
 };
 
+const question_by_examID_and_Index = (req, res) => {
+  const examID = req.params.id;
+  const index = req.params.index;
+  Question.findOne({ examID, index })
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
+};
+
 const question_create = (req, res) => {
   const examID = req.body.examID;
   Exam.findById(examID)
@@ -40,4 +52,8 @@ const question_create = (req, res) => {
     });
 };
 
-module.exports = { questions_by_examID, question_create };
+module.exports = {
+  questions_by_examID,
+  question_create,
+  question_by_examID_and_Index,
+};

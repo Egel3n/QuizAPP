@@ -1,11 +1,12 @@
 import { useRef, useState, useEffect, useContext } from "react";
 import AuthContext from "./context/AuthProvider";
+import useAuth from "./hooks/useAuth";
 
 import axios from "./api/axios";
-const LOGIN_URL = "/auth";
+const LOGIN_URL = "/login";
 
 const Login = () => {
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth } = useAuth();
   const userRef = useRef();
   const errRef = useRef();
 
@@ -28,7 +29,7 @@ const Login = () => {
     try {
       const response = await axios.post(
         LOGIN_URL,
-        JSON.stringify({ user, pwd }),
+        JSON.stringify({ username: user, password: pwd }),
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
@@ -37,8 +38,10 @@ const Login = () => {
       console.log(JSON.stringify(response?.data));
       //console.log(JSON.stringify(response));
       const accessToken = response?.data?.accessToken;
-      const roles = response?.data?.roles;
-      setAuth({ user, pwd, roles, accessToken });
+      const roles = response?.data?.role;
+      const username = response?.data?.username;
+      const userID = response?.data?.user;
+      setAuth({ username, user, pwd, roles, accessToken, userID });
       setUser("");
       setPwd("");
       setSuccess(true);
@@ -60,10 +63,10 @@ const Login = () => {
     <>
       {success ? (
         <section>
-          <h1>You are logged in!</h1>
+          <h1>You are logged in</h1>
           <br />
           <p>
-            <a href="/">Go to Exams</a>
+            <a href="/">Go to HomePage</a>
           </p>
         </section>
       ) : (

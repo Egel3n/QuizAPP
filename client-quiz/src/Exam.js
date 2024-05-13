@@ -2,9 +2,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import useFetch from "./useFetch";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import myAxios from "./api/axios";
+import { useCookies } from "react-cookie";
 
 const Exam = () => {
   const { id } = useParams();
+  const [cookies, setCookie, removeCookie] = useCookies(["userID"]);
   const [questionNumber, setQuestionNumber] = useState(1);
   const [answers, setAnswers] = useState("");
   const [answer, setAnswer] = useState("");
@@ -17,15 +20,9 @@ const Exam = () => {
     data: question,
     isPending,
     error,
-  } = useFetch(
-    "http://localhost:8000/questions?examID=" + id + "&index=" + questionNumber
-  );
+  } = useFetch("/question/exam/" + id + "/" + questionNumber);
 
-  const {
-    data: exam,
-    isPendingExam,
-    errorExam,
-  } = useFetch("http://localhost:8000/exams/" + id);
+  const { data: exam, isPendingExam, errorExam } = useFetch("/exam/find/" + id);
 
   function evaluateGrade(examAnswers, userAnswers) {
     let grade = 0;
@@ -37,8 +34,12 @@ const Exam = () => {
     return grade;
   }
 
-  function checkExamOver(examAnswers, userAnswers) {
+  async function checkExamOver(examAnswers, userAnswers) {
     if (examAnswers.length == userAnswers.length) {
+      const score = evaluateGrade(userAnswers, examAnswers);
+      const updateObject = { userid: cookies.userID, examid: id, score };
+      const response = await myAxios.put("/studentexam", updateObject);
+      console.log(response);
       history("/completed/" + evaluateGrade(userAnswers, examAnswers));
     }
   }
@@ -54,7 +55,7 @@ const Exam = () => {
       "https://timeapi.io/api/Time/current/zone?timeZone=Europe/Istanbul"
     );
 
-    let examDate = new Date(exam.startDate);
+    let examDate = new Date(exam.date);
     let finishDate = new Date(examDate.getTime() + exam.duration * 60000);
     let currentDate = new Date(globalDate.data.dateTime);
     let distance = finishDate.getTime() - currentDate.getTime();
@@ -68,7 +69,7 @@ const Exam = () => {
   }
 
   useEffect(() => {
-    answers && checkExamOver(exam.answers, answers);
+    answers && checkExamOver(exam.answerKey, answers);
   }, [answers]);
 
   useEffect(() => {
@@ -92,7 +93,7 @@ const Exam = () => {
           {
             <div className="questionFrame">
               <h4>Question {questionNumber}</h4>
-              <p>{question[0].question}</p>
+              <p>{question.questionString}</p>
               <form onSubmit={handleClick}>
                 <div className="option">
                   <input
@@ -103,7 +104,7 @@ const Exam = () => {
                     onChange={(e) => setAnswer(e.target.value)}
                   />
 
-                  <label htmlFor="optionA"> A) {question[0].optionA}</label>
+                  <label htmlFor="optionA"> A) {question.optionA}</label>
                 </div>
 
                 <div className="option">
@@ -114,7 +115,7 @@ const Exam = () => {
                     value={"B"}
                     onChange={(e) => setAnswer(e.target.value)}
                   />
-                  <label htmlFor="optionB"> B) {question[0].optionB}</label>
+                  <label htmlFor="optionB"> B) {question.optionB}</label>
                 </div>
                 <div className="option">
                   <input
@@ -124,7 +125,7 @@ const Exam = () => {
                     value={"C"}
                     onChange={(e) => setAnswer(e.target.value)}
                   />
-                  <label htmlFor="optionC"> C) {question[0].optionC}</label>
+                  <label htmlFor="optionC"> C) {question.optionC}</label>
                 </div>
                 <div className="option">
                   <input
@@ -132,9 +133,9 @@ const Exam = () => {
                     name="options"
                     id="optionD"
                     value={"D"}
-                    onChange={(e) => setAnswer(answers + e.target.value)}
+                    onChange={(e) => setAnswer(e.target.value)}
                   />
-                  <label htmlFor="optionD"> D) {question[0].optionD}</label>
+                  <label htmlFor="optionD"> D) {question.optionD}</label>
                 </div>
                 <button type="submit"> Next Question</button>
               </form>

@@ -6,10 +6,10 @@ const BlogList = ({ exams, title, classType }) => {
       <h2>{title}</h2>
       {exams &&
         exams.map((exam) => (
-          <div className={classType} key={exam.id}>
-            <Link to={`/exams/${exam.id}`}>
-              <h2>{exam.examName}</h2>
-              <p>⏲️: {exam.startDate}</p>
+          <div className={classType} key={exam._id}>
+            <Link to={`/exams/${exam._id}`}>
+              <h2>{exam.title}</h2>
+              <p>⏲️: {exam.date}</p>
             </Link>
           </div>
         ))}

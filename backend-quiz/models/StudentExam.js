@@ -17,6 +17,11 @@ const studentExamSchema = new Schema({
   result: {
     type: Number,
     required: true,
+    default: 0,
+  },
+  studentName: {
+    type: String,
+    required: true,
   },
 });
 

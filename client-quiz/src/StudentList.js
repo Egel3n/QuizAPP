@@ -1,26 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const StudentList = () => {
-  const [StudentList, setStudentList] = useState(null);
-
-  async function getStudentList() {
-    const StudentList = await axios.get("http://localhost:8000/Student");
-    console.log(StudentList);
-    setStudentList(StudentList.data);
-  }
-
-  useEffect(() => {
-    getStudentList();
-  }, []);
-
+const StudentList = ({ exams, title, classType }) => {
   return (
     <div className="StudentList">
-      {StudentList &&
-        StudentList.map((student) => (
+      {exams &&
+        exams.map((student) => (
           <div className="student-result">
             <p>No: {student.studentID}</p>
-            <p>Name: {student.name}</p>
+            <p>Name: {student.studentName}</p>
             <p>Result: {student.result}</p>
           </div>
         ))}

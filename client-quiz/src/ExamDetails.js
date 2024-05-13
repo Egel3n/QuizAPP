@@ -2,15 +2,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import useFetch from "./useFetch";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import myAxios from "./api/axios";
+import { useCookies } from "react-cookie";
 
 const BlogDetails = () => {
   const { id } = useParams();
   const [wait, setWait] = useState(true);
-  const {
-    data: exam,
-    isPending,
-    error,
-  } = useFetch("http://localhost:8000/exams/" + id);
+  const [isActive, setIsActive] = useState(false);
+  const [cookies] = useCookies(["userID"]);
+  const { data: exam, isPending, error } = useFetch("/exam/find/" + id);
+
   const navigator = useNavigate();
   const handleClick = () => {
     navigator("/exam/" + id);
@@ -21,15 +22,23 @@ const BlogDetails = () => {
       "https://timeapi.io/api/Time/current/zone?timeZone=Europe/Istanbul"
     );
     const currentDate = new Date(globalDate.data.dateTime);
-    const examDate = new Date(exam.startDate);
-
+    const examDate = new Date(exam.date);
+    const response = await myAxios.get(
+      "/studentexam/find/" + cookies.userID + "/" + id
+    );
+    console.log(response);
+    if (response.data.active) {
+      setIsActive(true);
+    }
     if (currentDate.getTime() >= examDate.getTime()) {
       setWait(false);
+      console.log("isActive = " + isActive);
     }
   }
 
   useEffect(() => {
     exam && isExamStarted();
+    console.log(exam);
   });
 
   return (
@@ -38,18 +47,23 @@ const BlogDetails = () => {
       {error && <div>{error}</div>}
       {exam && (
         <article>
-          <h2>{exam.examName}</h2>
-          <p>Date 📅: {exam.startDate}</p>
+          <h2>{exam.title}</h2>
+          <p>Date 📅: {exam.date}</p>
           <p>Duration 🕛: {exam.duration}</p>
           <p>
             Question Count:{" "}
-            <span className="questionNumber">{exam.questionNumber}</span>
+            <span className="questionNumber">{exam.questionCount}</span>
           </p>
 
-          {!wait && <button onClick={handleClick}>JOIN</button>}
-          {wait && (
+          {!wait && isActive && <button onClick={handleClick}>JOIN</button>}
+          {wait && isActive && (
             <button disabled style={{ background: "#383838" }}>
-              JOIN
+              Not Started
+            </button>
+          )}
+          {!isActive && (
+            <button disabled style={{ background: "#383838" }}>
+              Already Completed
             </button>
           )}
         </article>
