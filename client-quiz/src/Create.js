@@ -58,7 +58,7 @@ const Create = () => {
         />
         <label>Quiz Date:</label>
         <input
-          type="date"
+          type="datetime-local"
           required
           value={date}
           onChange={(e) => setDate(e.target.value)}

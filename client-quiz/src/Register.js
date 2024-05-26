@@ -279,7 +279,7 @@ const Register = () => {
             <button
               disabled={!validName || !validPwd || !validMatch ? true : false}
             >
-              Sign Up
+              Create
             </button>
           </form>
         </section>

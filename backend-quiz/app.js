@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 const corsOptions = {
-  origin: "*",
+  origin: "http://localhost:3000",
   credentials: true, //access-control-allow-credentials:true
   optionSuccessStatus: 200,
 };

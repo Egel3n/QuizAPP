@@ -11,7 +11,6 @@ const Welcome = () => {
         <span style={{ color: "#f1356d" }}>
           {cookies?.name.toUpperCase()}
         </span>{" "}
-        !
       </h1>
       {cookies.role === "student" ? (
         <h3 style={{ margin: 30 }}>

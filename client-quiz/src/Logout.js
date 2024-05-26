@@ -15,7 +15,7 @@ const Logout = () => {
       <h1>You are logged out!</h1>
       <br />
       <p>
-        <a href="/login">Go to Login</a>
+        <a href="/">Go to Login</a>
       </p>
     </section>
   );

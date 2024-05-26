@@ -88,6 +88,12 @@ module.exports.signup_post = async (req, res) => {
 
 module.exports.login_post = async (req, res) => {
   const { username, password } = req.body;
+  const cookieOptions = {
+    httpOnly: false,
+    maxAge: maxAge * 1000,
+    sameSite: "none",
+    secure: "false",
+  };
   if (await Teacher.exists({ username: username })) {
     try {
       const user = await Teacher.login(username, password);
@@ -134,7 +140,7 @@ module.exports.login_post = async (req, res) => {
     }
   } else if (await Admin.exists({ username: username })) {
     try {
-      console.log("Ögrenci girdi");
+      console.log("Admin girdi");
       const user = await Admin.login(username, password);
       const token = createToken(user._id);
       res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
@@ -155,13 +161,20 @@ module.exports.login_post = async (req, res) => {
       const errors = handleErrors(err);
       res.status(400).json({ errors });
     }
+  } else {
+    res.status(400).json();
   }
 };
 
 module.exports.logout_get = (req, res) => {
-  res.cookie("jwt", "", { maxAge: 1 });
-  res.cookie("role", "", { maxAge: 1 });
-  res.cookie("name", "", { maxAge: 1 });
-  res.cookie("userID", "", { maxAge: 1 });
+  const cookieOptions = {
+    maxAge: 1,
+    sameSite: "none",
+    secure: "false",
+  };
+  res.cookie("jwt", "", cookieOptions);
+  res.cookie("role", "", cookieOptions);
+  res.cookie("name", "", cookieOptions);
+  res.cookie("userID", "", cookieOptions);
   res.status(200).send("LoggedOut");
 };

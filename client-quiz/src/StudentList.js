@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 const StudentList = ({ exams, title, classType }) => {
+  console.log(exams);
   return (
     <div className="StudentList">
       {exams &&

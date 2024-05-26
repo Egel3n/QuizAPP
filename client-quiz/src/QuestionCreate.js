@@ -55,7 +55,7 @@ const QuestionCreate = () => {
 
   useEffect(() => {
     if (index > questionCount) {
-      history("/");
+      history("/examcreated");
     }
   });
 

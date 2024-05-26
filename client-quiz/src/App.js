@@ -16,6 +16,7 @@ import PersistLogin from "./PersistLogin";
 import Logout from "./Logout";
 import { useCookies } from "react-cookie";
 import Welcome from "./Welcome";
+import ExamCreated from "./ExamCreated";
 
 function App() {
   const [cookies, setCookie, removeCookie] = useCookies();
@@ -38,6 +39,7 @@ function App() {
               />
             </Route>
             <Route path="/register" Component={Register} />
+            <Route path="/examcreated" Component={ExamCreated} />
             <Route path="/TeacherExams" Component={TeacherExamPage} />
             <Route path="/teacherexams/:id" Component={StudentListPage} />
             <Route path="/logout" Component={Logout} />
